@@ -142,7 +142,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
         this.isValidBid = function(n) {
             if (!n) return false;
             n = parseInt(n, 10);
-            return !isNaN(n) && isFinite(n) && n >= 0 && n <= 100;
+            return !isNaN(n) && isFinite(n) && n >= 0 && n <= settings.COINS;
         };
 
         treatment = node.env('treatment');
