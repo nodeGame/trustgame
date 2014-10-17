@@ -1,5 +1,5 @@
 /**
- * # Client code for Ultimatum Game
+ * # Client code for Trust Game
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
@@ -142,13 +142,13 @@ module.exports = function(gameRoom, treatmentName, settings) {
         this.isValidBid = function(n) {
             if (!n) return false;
             n = parseInt(n, 10);
-            return !isNaN(n) && isFinite(n) && n >= 0 && n <= settings.COINS;
+            return !isNaN(n) && isFinite(n) && n >= 0 && n <= node.env.coins;
         };
 
         treatment = node.env('treatment');
 
         // Adapting the game to the treatment.
-        node.game.instructionsPage = '/ultimatum/html/';
+        node.game.instructionsPage = '/trustgame/html/';
         if (treatment === 'pp') {
             node.game.instructionsPage += 'instructions_pp.html';
         }
@@ -186,11 +186,11 @@ module.exports = function(gameRoom, treatmentName, settings) {
         // preCache is broken.
         W.preCache([
             node.game.instructionsPage,
-            '/ultimatum/html/quiz.html',
-            //'/ultimatum/html/bidder.html',  // these two are cached by following
-            //'/ultimatum/html/resp.html',    // loadFrame calls (for demonstration)
-            '/ultimatum/html/postgame.html',
-            '/ultimatum/html/ended.html'
+            '/trustgame/html/quiz.html',
+            //'/trustgame/html/bidder.html',  // these two are cached by following
+            //'/trustgame/html/resp.html',    // loadFrame calls (for demonstration)
+            '/trustgame/html/postgame.html',
+            '/trustgame/html/ended.html'
         ], function() {
             console.log('Precache done.');
             // Pre-Caching done; proceed to the next stage.
@@ -249,7 +249,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
 
     function quiz() {
         var that = this;
-        W.loadFrame('/ultimatum/html/quiz.html', function() {
+        W.loadFrame('/trustgame/html/quiz.html', function() {
             var b, QUIZ;
             node.env('auto', function() {
                 node.timer.randomExec(function() {
@@ -260,7 +260,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
         console.log('Quiz');
     }
 
-    function ultimatum() {
+    function trustgame() {
 
         //////////////////////////////////////////////
         // nodeGame hint:
@@ -308,7 +308,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
             // all the changes done while the frame was open.
             //
             /////////////////////////////////////////////
-            W.loadFrame('/ultimatum/html/bidder.html', function() {
+            W.loadFrame('/trustgame/html/bidder.html', function() {
 
                 // Start the timer after an offer was received.
                 options = {
@@ -370,7 +370,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
             other = msg.data.other;
             node.set('ROLE', 'RESPONDENT');
 
-            W.loadFrame('/ultimatum/html/resp.html', function() {
+            W.loadFrame('/trustgame/html/resp.html', function() {
                 options = {
                     milliseconds: 30000
                 };
@@ -436,11 +436,11 @@ module.exports = function(gameRoom, treatmentName, settings) {
 
         });
 
-        console.log('Ultimatum');
+        console.log('Trust Game');
     }
 
     function postgame() {
-        W.loadFrame('/ultimatum/html/postgame.html', function() {
+        W.loadFrame('/trustgame/html/postgame.html', function() {
             node.env('auto', function() {
                 node.timer.randomExec(function() {
                     node.game.timer.doTimeUp();
@@ -451,7 +451,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
     }
 
     function endgame() {
-        W.loadFrame('/ultimatum/html/ended.html', function() {
+        W.loadFrame('/trustgame/html/ended.html', function() {
             node.game.timer.switchActiveBoxTo(node.game.timer.mainBox);
             node.game.timer.waitBox.hideBox();
             node.game.timer.setToZero();
@@ -583,8 +583,8 @@ module.exports = function(gameRoom, treatmentName, settings) {
     });
 
     stager.addStage({
-        id: 'ultimatum',
-        cb: ultimatum,
+        id: 'trustgame',
+        cb: trustgame,
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ],
         // `syncOnLoaded` forces the clients to wait for all the others to be
         // fully loaded before releasing the control of the screen to the
@@ -651,9 +651,9 @@ module.exports = function(gameRoom, treatmentName, settings) {
 
     stager.init()
         .next('precache')
-        .next('instructions')
-        .next('quiz')
-        .repeat('ultimatum', settings.REPEAT)
+        // .next('instructions')
+        // .next('quiz')
+        .repeat('trustgame', settings.REPEAT)
         .next('questionnaire')
         .next('endgame')
         .gameover();
@@ -663,7 +663,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
 
     // Let's add the metadata information.
     game.metadata = {
-        name: 'ultimatum',
+        name: 'trustgame',
         version: '0.1.0',
         description: 'no descr'
     };
@@ -674,7 +674,8 @@ module.exports = function(gameRoom, treatmentName, settings) {
     };
     game.env = {
         auto: settings.AUTO,
-        treatment: treatmentName
+        treatment: treatmentName,
+        coins: settings.COINS,
     };
     game.verbosity = 100;
 

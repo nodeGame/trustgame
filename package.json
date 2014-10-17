@@ -1,6 +1,6 @@
 {
   "name": "trustgame",
-  "description": "Plays an ultimatum game with nodegame",
+  "description": "Plays an trustgame game with nodegame",
   "version": "0.0.1",
   "alias": ["u1", "u2"],
   "author": {
@@ -12,13 +12,13 @@
   "main": "./index.html"
 ,
   "keywords": [
-    "ultimatum",
+    "trustgame",
     "game theory"
   ]
 ,
   "repository": {
     "type": "git",
-     "url": "git://github.com/nodegame/ultimatum.git"
+     "url": "git://github.com/nodegame/trustgame.git"
   },
   "license": "MIT/X11"
 ,

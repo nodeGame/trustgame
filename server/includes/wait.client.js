@@ -1,5 +1,5 @@
 /**
- * # Antechamber for Ultimatum Game
+ * # Antechamber for Trust Game
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
@@ -54,7 +54,7 @@ function waiting2start() {
     // acquired.
     //
     /////////////////////////////////////////////
-    node.getJSON(['/ultimatum/package.json'], function(data) {
+    node.getJSON(['/trustgame/package.json'], function(data) {
         var root;
 
         root = W.getElementById('waitingForPlayers')

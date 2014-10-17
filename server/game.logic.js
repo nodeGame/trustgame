@@ -1,5 +1,5 @@
 /**
- * # Logic code for Ultimatum Game
+ * # Logic code for Trust Game
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
@@ -114,7 +114,7 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
 
     // Event handler registered in the init function are always valid.
     stager.setOnInit(function() {
-        console.log('********************** ultimatum room ' + counter++ + ' **********************');
+        console.log('********************** trustgame room ' + counter++ + ' **********************');
 
         node.game.lastStage = node.game.getCurrentGameStage();
 
@@ -329,8 +329,8 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
         console.log('Quiz');
     }
 
-    function ultimatum() {
-        console.log('Ultimatum');
+    function trustgame() {
+        console.log('Trust Game');
         doMatch();
     }
 
@@ -434,8 +434,8 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
     });
 
     stager.addStage({
-        id: 'ultimatum',
-        cb: ultimatum,
+        id: 'trustgame',
+        cb: trustgame,
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
     });
 
@@ -455,9 +455,9 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
     stager
         .init()
         .next('precache')
-        .next('instructions')
-        .next('quiz')
-        .repeat('ultimatum', REPEAT)
+        // .next('instructions')
+        // .next('quiz')
+        .repeat('trustgame', REPEAT)
         .next('questionnaire')
         .next('endgame')
         .gameover();
@@ -466,7 +466,7 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
     return {
         nodename: 'lgc' + counter,
         game_metadata: {
-            name: 'ultimatum',
+            name: 'trustgame',
             version: '0.1.0'
         },
         game_settings: {

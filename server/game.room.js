@@ -1,9 +1,9 @@
 /**
- * # Waiting Room for Ultimatum Game
+ * # Waiting Room for Trust Game
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Handles incoming connections, matches them, sets the Ultimatum game
+ * Handles incoming connections, matches them, sets the Trust game
  * in each client, move them in a separate gaming room, and start the game.
  * ---
  */
@@ -248,9 +248,9 @@ module.exports = function(node, channel, room) {
                 // - gameName: the name of the game to play (string)
                 // - treatmentName: the name of the treatment to play (string)
                 gameRoom = channel.createGameRoom({
-                    group: 'ultimatum',
+                    group: 'trustgame',
                     clients: tmpPlayerList,
-                    gameName: 'ultimatum',
+                    gameName: 'trustgame',
                     treatmentName: treatment
                 });
 

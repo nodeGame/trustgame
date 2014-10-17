@@ -1,5 +1,5 @@
 /**
- * # Game settings: Ultimatum Game
+ * # Game settings: Trust Game
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *

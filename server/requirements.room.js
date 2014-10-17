@@ -1,5 +1,5 @@
 /**
- * # Requirements Room for Ultimatum Game
+ * # Requirements Room for Trust Game
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
@@ -76,7 +76,7 @@ module.exports = function(node, channel, room) {
             code = dk.codeExists(mtid);
 
             if (!code) {
-                // errUri = '/ultimatum/unauth.html?id=' + mtid + '&err0=1';
+                // errUri = '/trustgame/unauth.html?id=' + mtid + '&err0=1';
                 // node.redirect(errUri, msg.data.id);
                 return {
                     success: false,
@@ -99,7 +99,7 @@ module.exports = function(node, channel, room) {
             return {
                 success: true,
                 msg: 'Code validated.',
-                gameLink: '/ultimatum/'
+                gameLink: '/trustgame/'
             };
         });
 
