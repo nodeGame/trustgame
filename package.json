@@ -1,5 +1,5 @@
 {
-  "name": "ultimatum",
+  "name": "trustgame",
   "description": "Plays an ultimatum game with nodegame",
   "version": "0.0.1",
   "alias": ["u1", "u2"],
