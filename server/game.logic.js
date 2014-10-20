@@ -106,8 +106,8 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
 
             // Send a message to each player with their role
             // and the id of the other player.
-            node.say('BIDDER', bidder.id, data_b);
-            node.say('RESPONDENT', respondent.id, data_r);
+            node.say('TRUSTEE', bidder.id, data_b);
+            node.say('TRUSTOR', respondent.id, data_r);
         }
         console.log('Matching completed.');
     }

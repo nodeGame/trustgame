@@ -15,6 +15,9 @@ var Stager = ngc.Stager;
 var stepRules = ngc.stepRules;
 var constants = ngc.constants;
 
+var trustor = require('./game.client.trustor.js');
+var trustee = require('./game.client.trustee.js');
+
 // Export the game-creating function. It needs the name of the treatment and
 // its options.
 module.exports = function(gameRoom, treatmentName, settings) {
@@ -29,6 +32,8 @@ module.exports = function(gameRoom, treatmentName, settings) {
     // GLOBALS
 
     game.globals = {};
+    stager.setDefaultGlobals({trustor: trustor, trustee: trustee});
+
 
     // INIT and GAMEOVER
 
@@ -81,7 +86,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
             node.game.timer.clear();
             node.game.timer.startWaiting({milliseconds: 30000});
 
-            W.getElementById('submitOffer').disabled = 'disabled';
+            // W.getElementById('submitOffer').disabled = 'disabled';
             node.set('offer', offer);
             node.say('OFFER', to, offer);
             root = W.getElementById('container');
@@ -123,26 +128,13 @@ module.exports = function(gameRoom, treatmentName, settings) {
             W.clearFrame();
         });
 
-        this.randomAccept = function(offer, other) {
-            var root, accepted;
-            accepted = Math.round(Math.random());
-            console.log('randomaccept');
-            console.log(offer + ' ' + other);
-            root = W.getElementById('container');
-            if (accepted) {
-                node.emit('RESPONSE_DONE', 'ACCEPT', offer, other);
-                W.write(' You accepted the offer.', root);
-            }
-            else {
-                node.emit('RESPONSE_DONE', 'REJECT', offer, other);
-                W.write(' You rejected the offer.', root);
-            }
-        };
+        this.isValidBid = function(n, lower, upper) {
+            lower = lower || 0;
+            upper = upper || node.env.coins;
 
-        this.isValidBid = function(n) {
             if (!n) return false;
             n = parseInt(n, 10);
-            return !isNaN(n) && isFinite(n) && n >= 0 && n <= node.env.coins;
+            return !isNaN(n) && isFinite(n) && n >= lower && n <= upper;
         };
 
         treatment = node.env('treatment');
@@ -278,163 +270,8 @@ module.exports = function(gameRoom, treatmentName, settings) {
         var that = this;
 
         var root, b, options, other;
-
-        // Load the BIDDER interface.
-        node.on.data('BIDDER', function(msg) {
-            console.log('RECEIVED BIDDER!');
-            other = msg.data.other;
-            node.set('ROLE', 'BIDDER');
-
-            //////////////////////////////////////////////
-            // nodeGame hint:
-            //
-            // W.loadFrame takes an optional third 'options' argument which
-            // can be used to request caching of the displayed frames (see
-            // the end of the following function call). The caching mode
-            // can be set with two fields: 'loadMode' and 'storeMode'.
-            //
-            // 'loadMode' specifies whether the frame should be reloaded
-            // regardless of caching (loadMode = 'reload') or whether the
-            // frame should be looked up in the cache (loadMode = 'cache',
-            // default).  If the frame is not in the cache, it is always
-            // loaded from the server.
-            //
-            // 'storeMode' says when, if at all, to store the loaded frame.
-            // By default the cache isn't updated (storeMode = 'off'). The
-            // other options are to cache the frame right after it has been
-            // loaded (storeMode = 'onLoad') and to cache it when it is
-            // closed, that is, when the frame is replaced by other
-            // contents (storeMode = 'onClose'). This last mode preserves
-            // all the changes done while the frame was open.
-            //
-            /////////////////////////////////////////////
-            W.loadFrame('/trustgame/html/bidder.html', function() {
-
-                // Start the timer after an offer was received.
-                options = {
-                    milliseconds: 30000,
-                    timeup: function() {
-                        node.emit('BID_DONE', Math.floor(1 +
-                                                         Math.random()*100), other);
-                    }
-                };
-
-                node.game.timer.startTiming(options);
-
-                b = W.getElementById('submitOffer');
-
-                node.env('auto', function() {
-
-                    //////////////////////////////////////////////
-                    // nodeGame hint:
-                    //
-                    // Execute a function randomly
-                    // in a time interval between 0 and 1 second
-                    //
-                    //////////////////////////////////////////////
-                    node.timer.randomExec(function() {
-                        node.emit('BID_DONE',
-                                  Math.floor(1+Math.random()*100),
-                                  other);
-                    }, 4000);
-                });
-
-                b.onclick = function() {
-                    var offer = W.getElementById('offer');
-                    if (!that.isValidBid(offer.value)) {
-                        W.writeln('Please enter a number between 0 and 100');
-                        return;
-                    }
-                    node.emit('BID_DONE', offer.value, other);
-                };
-
-                root = W.getElementById('container');
-
-                node.on.data('ACCEPT', function(msg) {
-                    W.write(' Your offer was accepted.', root);
-                    node.timer.randomEmit('DONE', 3000);
-                });
-
-                node.on.data('REJECT', function(msg) {
-                    W.write(' Your offer was rejected.', root);
-                    node.timer.randomEmit('DONE', 3000);
-                });
-            });
-            //}, { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
-
-        });
-
-        // Load the respondent interface.
-        node.on.data('RESPONDENT', function(msg) {
-            console.log('RECEIVED RESPONDENT!');
-            other = msg.data.other;
-            node.set('ROLE', 'RESPONDENT');
-
-            W.loadFrame('/trustgame/html/resp.html', function() {
-                options = {
-                    milliseconds: 30000
-                };
-
-                node.game.timer.startWaiting(options);
-                node.game.timer.mainBox.hideBox();
-
-                //////////////////////////////////////////////
-                // nodeGame hint:
-                //
-                // nodeGame offers several types of event
-                // listeners. They are all resemble the syntax
-                //
-                // node.on.<target>
-                //
-                // For example: node.on.data(), node.on.plist().
-                //
-                // The low level event listener is simply
-                //
-                // node.on
-                //
-                // For example, node.on('in.say.DATA', cb) can
-                // listen to all incoming DATA messages.
-                //
-                /////////////////////////////////////////////
-                node.on.data('OFFER', function(msg) {
-                    var theofferSpan, offered, accept, reject;
-
-                    options = {
-                        timeup: function() {
-                            that.randomAccept(msg.data, other);
-                        }
-                    };
-                    node.game.timer.startTiming(options);
-
-
-                    offered = W.getElementById('offered');
-                    theofferSpan = W.getElementById('theoffer');
-                    theofferSpan.innerHTML = msg.data;
-                    offered.style.display = '';
-
-                    accept = W.getElementById('accept');
-                    reject = W.getElementById('reject');
-
-                    node.env('auto', function() {
-                        node.timer.randomExec(function() {
-                            that.randomAccept(msg.data, other);
-                        }, 3000);
-                    });
-
-                    accept.onclick = function() {
-                        node.emit('RESPONSE_DONE', 'ACCEPT', msg.data,
-                                  other);
-                    };
-
-                    reject.onclick = function() {
-                        node.emit('RESPONSE_DONE', 'REJECT', msg.data,
-                                  other);
-                    };
-                });
-            });
-            //}, { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
-
-        });
+        node.game.plot.getGlobal(undefined, "trustor")(that);
+        node.game.plot.getGlobal(undefined, "trustee")(that);
 
         console.log('Trust Game');
     }
