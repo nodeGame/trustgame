@@ -38,6 +38,9 @@ module.exports = {
     // Number of coins to split. *
     COINS: 100,
 
+    // Number of milliseconds until the round times out
+    TIMEOUT: 30000,
+
     // Divider ECU / DOLLARS *
     EXCHANGE_RATE: 2000,
 

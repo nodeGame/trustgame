@@ -513,6 +513,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
         auto: settings.AUTO,
         treatment: treatmentName,
         coins: settings.COINS,
+        timeout: settings.TIMEOUT,
     };
     game.verbosity = 100;
 
