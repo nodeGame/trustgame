@@ -17,6 +17,7 @@ var constants = ngc.constants;
 
 var trustor = require('./game.client.trustor.js');
 var trustee = require('./game.client.trustee.js');
+var getGameStager = require('./game.stages.js');
 
 // Export the game-creating function. It needs the name of the treatment and
 // its options.
@@ -25,7 +26,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
     var game;
     var MIN_PLAYERS;
 
-    stager = new Stager();
+    stager = new Stager(getGameStager(settings));
     game = {};
     MIN_PLAYERS = settings.MIN_PLAYERS;
 
@@ -482,18 +483,6 @@ module.exports = function(gameRoom, treatmentName, settings) {
             return true;
         }
     });
-
-    // Now that all the stages have been added,
-    // we can build the game plot
-
-    stager.init()
-        .next('precache')
-        // .next('instructions')
-        // .next('quiz')
-        .repeat('trustgame', settings.REPEAT)
-        .next('questionnaire')
-        .next('endgame')
-        .gameover();
 
     // We serialize the game sequence before sending it.
     game.plot = stager.getState();

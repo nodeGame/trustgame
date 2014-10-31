@@ -5,6 +5,7 @@ Session.vim
 ~*
 *~
 *.tar.gz
+.DS_Store
 
 \#*
 .\#*

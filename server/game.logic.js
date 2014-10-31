@@ -31,15 +31,16 @@ var ngc = require('nodegame-client');
 var Stager = ngc.Stager;
 var stepRules = ngc.stepRules;
 var GameStage = ngc.GameStage;
+var getGameStager = require('./game.stages.js');
 var J = ngc.JSUS;
-
-var stager = new Stager();
 
 // Here we export the logic function. Receives three parameters:
 // - node: the NodeGameClient object.
 // - channel: the ServerChannel object in which this logic will be running.
 // - gameRoom: the GameRoom object in which this logic will be running.
 module.exports = function(node, channel, gameRoom, treatmentName, settings) {
+    var stager = new Stager(getGameStager(settings));
+
     var REPEAT = settings.REPEAT;
     var MIN_PLAYERS = settings.MIN_PLAYERS;
     var COINS = settings.COINS;
@@ -83,31 +84,31 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
     }
 
     function doMatch() {
-        var g, bidder, respondent, data_b, data_r;
+        var g, trustee, trustor, data_te, data_tr;
         var i;
         // Method shuffle accepts one parameter to update the db, as well as
         // returning a shuffled copy.
         g = node.game.pl.shuffle();
 
         for (i = 0 ; i < node.game.pl.size() ; i = i + 2) {
-            bidder = g.db[i];
-            respondent = g.db[i+1];
+            trustee = g.db[i];
+            trustor = g.db[i+1];
 
-            data_b = {
-                role: 'bidder',
-                other: respondent.id
+            data_te = {
+                role: 'trustee',
+                other: trustor.id
             };
-            data_r = {
-                role: 'respondent',
-                other: bidder.id
+            data_tr = {
+                role: 'trustor',
+                other: trustee.id
             };
 
-            console.log('Group ' + i + ': ', bidder.id, respondent.id);
+            console.log('Group ' + i + ': ', trustee.id, trustor.id);
 
             // Send a message to each player with their role
             // and the id of the other player.
-            node.say('TRUSTEE', bidder.id, data_b);
-            node.say('TRUSTOR', respondent.id, data_r);
+            node.say('TRUSTEE', trustee.id, data_te);
+            node.say('TRUSTOR', trustor.id, data_tr);
         }
         console.log('Matching completed.');
     }
@@ -317,25 +318,9 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
 
     // Functions
 
-    function precache() {
-        console.log('Pre-Cache');
-    }
-
-    function instructions() {
-        console.log('Instructions');
-    }
-
-    function quiz() {
-        console.log('Quiz');
-    }
-
     function trustgame() {
         console.log('Trust Game');
         doMatch();
-    }
-
-    function questionnaire() {
-        console.log('questionnaire');
     }
 
     function endgame() {
@@ -415,23 +400,20 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
 
     // Adding the stages. We can later on define the rules and order that
     // will determine their execution.
-    stager.addStage({
+    stager.extendStage({
         id: 'precache',
-        cb: precache,
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
     });
 
-    stager.addStage({
-        id: 'instructions',
-        cb: instructions,
-        minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
-    });
+    // stager.extendStage({
+    //     id: 'instructions',
+    //     minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
+    // });
 
-    stager.addStage({
-        id: 'quiz',
-        cb: quiz,
-        minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
-    });
+    // stager.extendStage({
+    //     id: 'quiz',
+    //     minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
+    // });
 
     stager.addStage({
         id: 'trustgame',
@@ -440,28 +422,11 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
     });
 
     stager.addStage({
-        id: 'questionnaire',
-        cb: questionnaire
-    });
-
-    stager.addStage({
         id: 'endgame',
         cb: endgame
     });
 
     // Building the game plot.
-
-    // Here we define the sequence of stages of the game (game plot).
-    stager
-        .init()
-        .next('precache')
-        // .next('instructions')
-        // .next('quiz')
-        .repeat('trustgame', REPEAT)
-        .next('questionnaire')
-        .next('endgame')
-        .gameover();
-
     // Here we group together the definition of the game logic.
     return {
         nodename: 'lgc' + counter,
