@@ -30,12 +30,6 @@ module.exports = function(gameRoom, treatmentName, settings) {
     game = {};
     MIN_PLAYERS = settings.MIN_PLAYERS;
 
-    // GLOBALS
-
-    game.globals = {};
-    stager.setDefaultGlobals({trustor: trustor, trustee: trustee});
-
-
     // INIT and GAMEOVER
 
     stager.setOnInit(function() {
@@ -50,14 +44,6 @@ module.exports = function(gameRoom, treatmentName, settings) {
         waitingForPlayers = W.getElementById('waitingForPlayers');
         waitingForPlayers.innerHTML = '';
         waitingForPlayers.style.display = 'none';
-
-        // Set up the main screen:
-        // - visual timer widget,
-        // - visual state widget,
-        // - state display widget,
-        // - iframe of play,
-        // - nodegame.css
-        // W.setupFrame('PLAYER');
 
         // We setup the page manually.
         if (!W.getHeader()) {
@@ -271,8 +257,10 @@ module.exports = function(gameRoom, treatmentName, settings) {
         var that = this;
 
         var root, b, options, other;
-        node.game.plot.getGlobal(undefined, "trustor")(that);
-        node.game.plot.getGlobal(undefined, "trustee")(that);
+
+        // Load the trustor and trustee event listeners.
+        node.game.globals.trustor(this);
+        node.game.globals.trustee(this);
 
         console.log('Trust Game');
     }
@@ -430,7 +418,11 @@ module.exports = function(gameRoom, treatmentName, settings) {
         // communications and delay in the execution of a stage. It is probably
         // not necessary in local networks, and it is FALSE by default.
         // syncOnLoaded: true,
-        done: clearFrame
+        done: clearFrame,
+        globals: {
+            trustor: trustor,
+            trustee: trustee
+        }
     });
 
     stager.addStage({

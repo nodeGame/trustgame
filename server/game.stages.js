@@ -5,8 +5,8 @@ module.exports = function(settings) {
 
   stager.init()
     .next('precache')
-    // .next('instructions')
-    // .next('quiz')
+    .next('instructions')
+    .next('quiz')
     .repeat('trustgame', settings.REPEAT)
     .next('questionnaire')
     .next('endgame')
