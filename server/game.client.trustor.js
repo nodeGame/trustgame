@@ -5,7 +5,7 @@ module.exports = function(stager) {
     other = msg.data.other;
     node.set('ROLE', 'TRUSTOR');
 
-    W.loadFrame('/trustgame/html/trustor.html', function() {
+    W.loadFrame('/trustgame/trustor.html', function() {
       var trustorContent = W.getElementById('trustorContent');
       var trustorErrors = W.getElementById('trustorErrors');
 

@@ -28,7 +28,7 @@ module.exports = function(stager) {
     // all the changes done while the frame was open.
     //
     /////////////////////////////////////////////
-    W.loadFrame('/trustgame/html/trustee.html', function() {
+    W.loadFrame('/trustgame/trustee.html', function() {
       var trusteeContent = W.getElementById('trusteeContent');
       var trusteeErrors = W.getElementById('trusteeErrors');
 

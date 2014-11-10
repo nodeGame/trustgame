@@ -64,7 +64,7 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
     // the treatment options, and it returns a game object.
     // TODO: Only pass the options from the current treatment; at
     // the moment, the entire game.settings structure is passed.
-    var client = require(gameRoom.clientPath)(gameRoom, treatmentName, settings);
+    var client = require(gameRoom.gamePaths.player)(gameRoom, treatmentName, settings);
 
     // Reads in descil-mturk configuration.
     var confPath = path.resolve(__dirname, 'descil.conf.js');
@@ -400,29 +400,27 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
 
     // Adding the stages. We can later on define the rules and order that
     // will determine their execution.
-    stager.extendStage({
-        id: 'precache',
-        minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
+    stager.extendStep('precache', {
+        minPlayers: [ MIN_PLAYERS, notEnoughPlayers ],
+        cb: function(){}
     });
 
-    // stager.extendStage({
-    //     id: 'instructions',
-    //     minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
-    // });
+    stager.extendStep('instructions', {
+        minPlayers: [ MIN_PLAYERS, notEnoughPlayers ],
+        cb: function(){}
+    });
 
-    // stager.extendStage({
-    //     id: 'quiz',
-    //     minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
-    // });
+    stager.extendStep('quiz', {
+        minPlayers: [ MIN_PLAYERS, notEnoughPlayers ],
+        cb: function(){}
+    });
 
-    stager.addStage({
-        id: 'trustgame',
+    stager.extendStep('trustgame', {
         cb: trustgame,
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
     });
 
-    stager.addStage({
-        id: 'endgame',
+    stager.extendStep('endgame', {
         cb: endgame
     });
 

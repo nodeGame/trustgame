@@ -127,7 +127,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
         treatment = node.env('treatment');
 
         // Adapting the game to the treatment.
-        node.game.instructionsPage = '/trustgame/html/';
+        node.game.instructionsPage = '/trustgame/';
         if (treatment === 'pp') {
             node.game.instructionsPage += 'instructions_pp.html';
         }
@@ -165,11 +165,11 @@ module.exports = function(gameRoom, treatmentName, settings) {
         // preCache is broken.
         W.preCache([
             node.game.instructionsPage,
-            '/trustgame/html/quiz.html',
-            //'/trustgame/html/bidder.html',  // these two are cached by following
-            //'/trustgame/html/resp.html',    // loadFrame calls (for demonstration)
-            '/trustgame/html/postgame.html',
-            '/trustgame/html/ended.html'
+            '/trustgame/quiz.html',
+            //'/trustgame/bidder.html',  // these two are cached by following
+            //'/trustgame/resp.html',    // loadFrame calls (for demonstration)
+            '/trustgame/postgame.html',
+            '/trustgame/ended.html'
         ], function() {
             console.log('Precache done.');
             // Pre-Caching done; proceed to the next stage.
@@ -228,7 +228,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
 
     function quiz() {
         var that = this;
-        W.loadFrame('/trustgame/html/quiz.html', function() {
+        W.loadFrame('/trustgame/quiz.html', function() {
             var b, QUIZ;
             node.env('auto', function() {
                 node.timer.randomExec(function() {
@@ -266,7 +266,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
     }
 
     function postgame() {
-        W.loadFrame('/trustgame/html/postgame.html', function() {
+        W.loadFrame('/trustgame/postgame.html', function() {
             node.env('auto', function() {
                 node.timer.randomExec(function() {
                     node.game.timer.doTimeUp();
@@ -277,7 +277,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
     }
 
     function endgame() {
-        W.loadFrame('/trustgame/html/ended.html', function() {
+        W.loadFrame('/trustgame/ended.html', function() {
             node.game.timer.switchActiveBoxTo(node.game.timer.mainBox);
             node.game.timer.waitBox.hideBox();
             node.game.timer.setToZero();
@@ -348,8 +348,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
     // In this case the client will wait for command from the server.
     stager.setDefaultStepRule(stepRules.WAIT);
 
-    stager.addStage({
-        id: 'precache',
+    stager.extendStep('precache', {
         cb: precache,
         // `minPlayers` triggers the execution of a callback in the case
         // the number of players (including this client) falls the below
@@ -359,8 +358,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
         done: clearFrame
     });
 
-    stager.addStage({
-        id: 'instructions',
+    stager.extendStep('instructions', {
         cb: instructions,
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ],
         // syncOnLoaded: true,
@@ -368,8 +366,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
         done: clearFrame
     });
 
-    stager.addStage({
-        id: 'quiz',
+    stager.extendStep('quiz', {
         cb: quiz,
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ],
         // syncOnLoaded: true,
@@ -408,8 +405,7 @@ module.exports = function(gameRoom, treatmentName, settings) {
         }
     });
 
-    stager.addStage({
-        id: 'trustgame',
+    stager.extendStep('trustgame', {
         cb: trustgame,
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ],
         // `syncOnLoaded` forces the clients to wait for all the others to be
@@ -425,14 +421,12 @@ module.exports = function(gameRoom, treatmentName, settings) {
         }
     });
 
-    stager.addStage({
-        id: 'endgame',
+    stager.extendStep('endgame', {
         cb: endgame,
         done: clearFrame
     });
 
-    stager.addStage({
-        id: 'questionnaire',
+    stager.extendStep('questionnaire', {
         cb: postgame,
         timer: 90000,
         // `done` is a callback function that is executed as soon as a
