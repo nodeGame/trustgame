@@ -33,7 +33,8 @@ function QUIZ(answers) {
             }
         });
 
-        document.getElementById('answers_counter').innerHTML = counter + ' / ' + document.forms.length;
+        document.getElementById('answers_counter').innerHTML =
+            counter + ' / ' + document.forms.length;
 
         if (counter === document.forms.length) {
             submitButton.disabled = true;
@@ -47,10 +48,10 @@ function QUIZ(answers) {
 
         if (radioObj.length) {
             for (var i = 0; i < radioObj.length; i++) {
-	        if (radioObj[i].checked) {
-		    return radioObj[i].value;
-	        }
-	    }
+                if (radioObj[i].checked) {
+                    return radioObj[i].value;
+                }
+            }
         }
 
         return radioObj.checked;
@@ -61,18 +62,19 @@ function QUIZ(answers) {
     // if the given value does not exist, all the radio buttons
     // are reset to unchecked
     function setCheckedValue(radioObj, newValue) {
-        if (!radioObj)
-	    return;
+        if (!radioObj) {
+            return;
+        }
         var radioLength = radioObj.length;
-        if (radioLength == undefined) {
-	    radioObj.checked = (radioObj.value == newValue.toString());
-	    return;
+        if (radioLength === undefined) {
+            radioObj.checked = (radioObj.value == newValue.toString());
+            return;
         }
         for (var i = 0; i < radioLength; i++) {
-	    radioObj[i].checked = false;
-	    if (radioObj[i].value == newValue.toString()) {
-	        radioObj[i].checked = true;
-	    }
+            radioObj[i].checked = false;
+            if (radioObj[i].value == newValue.toString()) {
+                radioObj[i].checked = true;
+            }
         }
     }
 

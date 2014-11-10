@@ -10,9 +10,10 @@
 module.exports = {
 
     // Files
-
-    logicPath: "game.logic.js",
-    clientPath: "game.client.js",
+    gamePaths: {
+        logic: "game.logic.js",
+        player: "game.client.js",
+    },
 
     // Group settings.
 

@@ -1,7 +1,7 @@
 var ngc = require('nodegame-client');
 
 module.exports = function(settings) {
-  var stager = new ngc.Stager();
+  var stager = ngc.getStager();
 
   stager.init()
     .next('precache')
