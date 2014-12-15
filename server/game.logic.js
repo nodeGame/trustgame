@@ -420,6 +420,10 @@ module.exports = function(node, channel, gameRoom, treatmentName, settings) {
         minPlayers: [ MIN_PLAYERS, notEnoughPlayers ]
     });
 
+    stager.extendStep('questionnaire', {
+        cb: function(){}
+    });
+
     stager.extendStep('endgame', {
         cb: endgame
     });
