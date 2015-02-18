@@ -2,38 +2,33 @@
   "name": "trustgame",
   "description": "Plays an trustgame game with nodegame",
   "version": "0.0.1",
-  "alias": ["u1", "u2"],
+  "alias": ["t1", "t2"],
   "author": {
     "name": "Stefano Balietti",
     "email": "sbalietti@ethz.ch",
     "url": "http://www.nodegame.org"
-  }
-,
-  "main": "./index.html"
-,
+  },
+  "main": "./index.html",
   "keywords": [
     "trustgame",
     "game theory"
-  ]
-,
+  ],
   "repository": {
     "type": "git",
      "url": "git://github.com/nodegame/trustgame.git"
   },
-  "license": "MIT/X11"
-,
+  "license": "MIT/X11",
   "engines": {
     "node": "*",
     "nodegame": ">= 0.6.0"
+  },
+  "nodegame": {
+     "logic": "./server/logic.js",
+     "dependencies": {
+       "not_used": "for now"
+     },
+     "widgets": {
+       "moneytalk": "0.1.0"
+     }
   }
-,
-	"nodegame": {
-	   "logic": "./server/logic.js",
-	   "dependencies": {
-	     "not_used": "for now"
-	   },
-	   "widgets": {
-	     "moneytalk": "0.1.0"
-	   }
-	}
 }
